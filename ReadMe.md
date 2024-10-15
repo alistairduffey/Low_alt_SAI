@@ -2,8 +2,7 @@ All code to
 (1) postprocess simulations (/Postprocess_runs) and 
 (2) analyse and plot postprocessed simulations (/Analysis)
 
-for Duffey et al., 2024: Low-altitude high-latitude stratospheric aerosol injection is feasible with existing aircraft
-Earth's Future (hopefully..). 
+for Duffey et al., 2024 (?): Low-altitude high-latitude stratospheric aerosol injection is feasible with existing aircraft
 
 NBs:
 
