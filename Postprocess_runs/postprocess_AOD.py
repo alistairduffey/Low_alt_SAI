@@ -11,9 +11,9 @@ import iris
 import pandas as pd
 import numpy as np
 import logging
-import esmvalcore.preprocessor
+#import esmvalcore.preprocessor
 import xarray as xr
-from xmip.preprocessing import rename_cmip6
+#from xmip.preprocessing import rename_cmip6
 import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -51,7 +51,17 @@ run_dict = {'u-df777':[30.625, 12.9],
             'u-dg027':[70.625, 12.3],
             'u-df710':[70.625, 12.9],
             'u-dg309':[70.625, 14.1],
-            'u-dg028':[70.625, 15.4]
+            'u-dg028':[70.625, 15.4],
+            'u-dg549':[70.625, 16.0],
+            'u-dg552':[70.625, 18.0],
+            'u-dg655':[70.625, 20.2],
+            'u-df848':[60.625, 12.9, 'Spring'],
+            'u-df859':[60.625, 12.9, 'Summer'],
+            'u-df931':[60.625, 12.9, 'Autumn'],
+            'u-df932':[60.625, 12.9, 'Winter'],
+            'u-dg051':[60.625, 12.9, 'Jan-Jun/Jul-Dec'],
+            'u-dg331':[60.625, 12.9, 'Mar-Aug/Sep-Feb'],
+            'u-dg381':[30.625, 15.4, 'Mar-Aug/Sep-Feb']
             }
 
 all_runs = ['u-de012', 'u-de052', 'u-de348', 'u-de399', 'u-de567', 
@@ -64,10 +74,8 @@ all_runs = ['u-de012', 'u-de052', 'u-de348', 'u-de399', 'u-de567',
             'u-de050', 'u-de187', 'u-de369', 'u-de517', 'u-df777', 
             'u-dg027', 'u-dg381']
 
-#for run in run_dict.keys():
+
 for run in all_runs:
-#for run in ['u-df848', 'u-df859', 'u-dg051', 'u-df931', 'u-df932', 'u-dg331', 'u-dg549', 'u-dg552']:
-#for run in ['u-df932', 'u-dg331', 'u-dg549', 'u-dg552']:
     print(run)
     
     stream = 'a.pm'
@@ -75,13 +83,13 @@ for run in all_runs:
     cycles = os.listdir(runpath)
     
     paths = []
-    for cycle in ['20350101T0000Z']:
+    for cycle in ['20360101T0000Z']:
         cyclepath = runpath + cycle + '/'
         files = [x for x in os.listdir(cyclepath) if stream in x]
         for f in files:
             paths.append(cyclepath+f)
     
-    paths = [x for x in paths if 'pm2036' in x]
+    paths = [x for x in paths if 'pm203' in x]
     
     
     stash_dict = {'m01s02i240':'Aitken_mode_soluble_absOD',
@@ -130,8 +138,15 @@ for run in all_runs:
         year = ds.time.dt.year.item()
         
         outpath_root = '/gws/nopw/j04/moghli/postprocessed_ncs/'
-        outpath = outpath_root+run+'/AOD_incl_dust'
-        
+        outpath = outpath_root+run+'/AOD' 
+        # NB - this AOD includes mineral dust, becuase we are comparing against the variable 'od550aer'
+        # i used to put this output into the dir 'AOD_incl_dust', but have now renamed this to 'AOD' for simplicity
+        attrs_dict = {'Author': 'Alistair Duffey, University College London, alistair.duffey.21@ucl.ac.uk',
+                      'Date':'October 2024',
+                      'Model':'UKESM1.0',
+                      'Simulation design':'Branched from SSP2-4.5 in 2035, with injection of 12Tg SO2 total across two injection locations per year',
+              }
+        ds = ds.assign_attrs(attrs_dict)
         if not os.path.exists(outpath):
             os.makedirs(outpath)
         print('saving:')
